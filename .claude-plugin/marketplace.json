@@ -1,0 +1,13 @@
+{
+  "name": "skills",
+  "owner": { "name": "priyanshuN", "url": "https://github.com/priyanshuN" },
+  "metadata": { "description": "Small personal skills in one plugin, kit." },
+  "plugins": [
+    {
+      "name": "kit",
+      "source": "./",
+      "description": "Small personal skills: handoff (pass prompts and context between two computers through a private claude.ai artifact).",
+      "author": { "name": "priyanshuN", "url": "https://github.com/priyanshuN" }
+    }
+  ]
+}

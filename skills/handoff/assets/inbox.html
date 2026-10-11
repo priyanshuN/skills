@@ -1,0 +1,239 @@
+<title>Handoff Inbox</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,600&family=Atkinson+Hyperlegible:wght@400;700&family=JetBrains+Mono:wght@400;500&display=swap">
+<style>
+/* Layout: two lanes side by side (one per destination laptop), compose bar on top; lanes stack on phones. */
+:root {
+  --bg: #f3f6f4;
+  --surface: #ffffff;
+  --fg: #16201b;
+  --muted: #5b6b62;
+  --line: #d6e0da;
+  --accent: #0f7a55;
+  --accent-soft: #e0f2ea;
+  --new: #b45309;
+  --new-soft: #fdf0dc;
+  --danger: #b42318;
+  --display: "Bricolage Grotesque", "Avenir Next", system-ui, sans-serif;
+  --body: "Atkinson Hyperlegible", system-ui, -apple-system, sans-serif;
+  --mono: "JetBrains Mono", ui-monospace, "SF Mono", Menlo, monospace;
+}
+@media (prefers-color-scheme: dark) { :root:not([data-theme="light"]) {
+  --bg: #0d1411; --surface: #131d18; --fg: #e3ece7; --muted: #8fa398; --line: #24332b;
+  --accent: #3ccf95; --accent-soft: #143426; --new: #f2a33a; --new-soft: #3a2a12; --danger: #f97066;
+  color-scheme: dark } }
+:root[data-theme="dark"] {
+  --bg: #0d1411; --surface: #131d18; --fg: #e3ece7; --muted: #8fa398; --line: #24332b;
+  --accent: #3ccf95; --accent-soft: #143426; --new: #f2a33a; --new-soft: #3a2a12; --danger: #f97066;
+  color-scheme: dark }
+
+body { background: var(--bg); color: var(--fg); font: 15px/1.5 var(--body); padding-inline: 16px; padding-block: 24px 48px; }
+.wrap { max-width: 1080px; margin: 0 auto; display: grid; gap: 20px; }
+header h1 { font: 600 28px/1.1 var(--display); margin: 0; text-wrap: balance; letter-spacing: -0.01em; }
+header p { margin: 6px 0 0; color: var(--muted); max-width: 64ch; }
+.mono { font-family: var(--mono); font-size: 12px; }
+
+.compose { background: var(--surface); border: 1px solid var(--line); border-radius: 10px; padding: 16px; display: grid; gap: 10px; }
+.compose .row { display: flex; gap: 10px; flex-wrap: wrap; align-items: center; }
+.seg { display: inline-flex; border: 1px solid var(--line); border-radius: 8px; overflow: hidden; }
+.seg button { border: 0; background: transparent; color: var(--muted); padding: 6px 12px; font: 500 13px var(--body); cursor: pointer; }
+.seg button[aria-pressed="true"] { background: var(--accent-soft); color: var(--accent); font-weight: 700; }
+input, textarea { width: 100%; box-sizing: border-box; background: var(--bg); color: var(--fg); border: 1px solid var(--line); border-radius: 8px; padding: 8px 10px; font: 14px/1.45 var(--body); }
+textarea { min-height: 110px; resize: vertical; font-family: var(--mono); font-size: 13px; }
+input:focus-visible, textarea:focus-visible, button:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+.btn { border: 1px solid var(--line); background: var(--surface); color: var(--fg); border-radius: 7px; padding: 5px 11px; font: 500 13px var(--body); cursor: pointer; }
+.btn:hover { border-color: var(--accent); }
+.btn.primary { background: var(--accent); border-color: var(--accent); color: var(--surface); font-weight: 700; }
+.btn.danger { color: var(--danger); }
+.btn:disabled { opacity: .5; cursor: default; }
+.status { color: var(--muted); font-size: 13px; }
+
+.lanes { display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 20px; align-items: start; }
+.lane { min-width: 0; display: grid; gap: 10px; }
+.lane h2 { font: 600 18px/1.2 var(--display); margin: 0; display: flex; align-items: baseline; gap: 10px; }
+.count { font: 500 12px var(--mono); color: var(--new); background: var(--new-soft); border-radius: 999px; padding: 1px 8px; }
+.count[data-zero] { color: var(--muted); background: transparent; }
+.list { display: grid; gap: 8px; }
+.item { background: var(--surface); border: 1px solid var(--line); border-radius: 9px; min-width: 0; }
+.item[data-status="new"] { border-left: 3px solid var(--new); }
+.item summary { list-style: none; cursor: pointer; padding: 10px 12px; display: grid; gap: 2px; }
+.item summary::-webkit-details-marker { display: none; }
+.item .t { font-weight: 700; overflow-wrap: anywhere; }
+.item .meta { color: var(--muted); display: flex; gap: 8px; flex-wrap: wrap; font-variant-numeric: tabular-nums; }
+.chip { font: 500 11px var(--mono); text-transform: uppercase; letter-spacing: .06em; }
+.chip.new { color: var(--new); }
+.body { margin: 0; padding: 0 12px 10px; white-space: pre-wrap; overflow-wrap: anywhere; font: 13px/1.5 var(--mono); max-height: 360px; overflow: auto; }
+.actions { display: flex; gap: 8px; flex-wrap: wrap; padding: 0 12px 12px; align-items: center; }
+.empty { border: 1px dashed var(--line); border-radius: 9px; padding: 16px; color: var(--muted); font-size: 14px; }
+.notice { background: var(--new-soft); color: var(--fg); border-radius: 8px; padding: 10px 12px; font-size: 14px; }
+@media (prefers-reduced-motion: no-preference) { .item { transition: border-color .15s; } }
+</style>
+
+<div class="wrap">
+  <header>
+    <h1>Handoff Inbox</h1>
+    <p>Prompts and context passed between the Mac and the work laptop. Each laptop's Claude reads its own lane with <span class="mono">/kit:handoff inbox</span>. Patterns only from work: no code, ticket text, customer data or secrets.</p>
+  </header>
+
+  <div id="notice" class="notice" hidden></div>
+
+  <form class="compose" id="compose" autocomplete="off">
+    <div class="row">
+      <span class="status">Send to</span>
+      <div class="seg" role="group" aria-label="Destination">
+        <button type="button" id="dest-work" data-dest="to-work" aria-pressed="true">Work laptop</button>
+        <button type="button" id="dest-mac" data-dest="to-mac" aria-pressed="false">Mac</button>
+      </div>
+    </div>
+    <input id="c-title" placeholder="Title, e.g. Slot-migration checker idea" maxlength="140" required>
+    <textarea id="c-body" placeholder="The prompt or context to hand over" required></textarea>
+    <div class="row">
+      <button class="btn primary" id="c-send" type="submit">Send</button>
+      <span class="status" id="c-status"></span>
+    </div>
+  </form>
+
+  <div class="lanes">
+    <section class="lane" aria-labelledby="h-work">
+      <h2 id="h-work">To work laptop <span class="count" id="n-to-work" data-zero>0 new</span></h2>
+      <div class="list" id="l-to-work"><div class="empty">Loading the inbox…</div></div>
+    </section>
+    <section class="lane" aria-labelledby="h-mac">
+      <h2 id="h-mac">To Mac <span class="count" id="n-to-mac" data-zero>0 new</span></h2>
+      <div class="list" id="l-to-mac"><div class="empty">Loading the inbox…</div></div>
+    </section>
+  </div>
+</div>
+
+<script>
+(() => {
+  const LANES = { "to-work": "the work laptop", "to-mac": "the Mac" };
+  let db = null;
+  let dest = "to-work";
+  const open = new Set();
+
+  const $ = (id) => document.getElementById(id);
+  const fmt = (iso) => {
+    if (!iso) return "";
+    const d = new Date(iso);
+    if (isNaN(d)) return iso;
+    return d.toLocaleString(undefined, { day: "numeric", month: "short", hour: "2-digit", minute: "2-digit" });
+  };
+  const newId = () => {
+    const d = new Date(), p = (n) => String(n).padStart(2, "0");
+    return `${d.getFullYear()}${p(d.getMonth() + 1)}${p(d.getDate())}-${p(d.getHours())}${p(d.getMinutes())}${p(d.getSeconds())}-${Math.random().toString(36).slice(2, 6)}`;
+  };
+
+  document.querySelectorAll(".seg button").forEach((b) => b.addEventListener("click", () => {
+    dest = b.dataset.dest;
+    document.querySelectorAll(".seg button").forEach((x) => x.setAttribute("aria-pressed", String(x === b)));
+  }));
+
+  function render(lane, snap) {
+    const list = $("l-" + lane);
+    const docs = snap.docs.filter((d) => d.exists);
+    const fresh = docs.filter((d) => d.data().status !== "read").length;
+    const count = $("n-" + lane);
+    count.textContent = fresh + " new";
+    count.toggleAttribute("data-zero", fresh === 0);
+    list.replaceChildren();
+    if (!docs.length) {
+      const e = document.createElement("div");
+      e.className = "empty";
+      e.textContent = `Nothing waiting for ${LANES[lane]}. Send one above, or run /kit:handoff send on the other laptop.`;
+      list.append(e);
+      return;
+    }
+    for (const d of docs) list.append(itemEl(lane, d));
+  }
+
+  function itemEl(lane, d) {
+    const v = d.data();
+    const key = lane + "/" + d.id;
+    const det = document.createElement("details");
+    det.className = "item";
+    det.dataset.status = v.status === "read" ? "read" : "new";
+    det.open = open.has(key);
+    det.addEventListener("toggle", () => det.open ? open.add(key) : open.delete(key));
+
+    const sum = document.createElement("summary");
+    const t = document.createElement("span"); t.className = "t"; t.textContent = v.title || "(untitled)";
+    const meta = document.createElement("span"); meta.className = "meta mono";
+    const chip = document.createElement("span");
+    chip.className = "chip" + (v.status === "read" ? "" : " new");
+    chip.textContent = v.status === "read" ? "read " + fmt(v.read_at) : "new";
+    const from = document.createElement("span"); from.textContent = "from " + (v.from || "?");
+    const when = document.createElement("span"); when.textContent = fmt(v.created_at);
+    meta.append(chip, from, when);
+    sum.append(t, meta);
+
+    const body = document.createElement("pre"); body.className = "body"; body.textContent = v.body || "";
+
+    const act = document.createElement("div"); act.className = "actions";
+    const copy = button("Copy", async () => {
+      try { await navigator.clipboard.writeText(v.body || ""); copy.textContent = "Copied"; }
+      catch { const r = document.createRange(); r.selectNodeContents(body); const s = getSelection(); s.removeAllRanges(); s.addRange(r); copy.textContent = "Selected, press ⌘C"; }
+      setTimeout(() => (copy.textContent = "Copy"), 1800);
+    });
+    const toggle = button(v.status === "read" ? "Mark new" : "Mark read", () => write(toggle,
+      () => db.collection(lane).doc(d.id).update(v.status === "read" ? { status: "new", read_at: null } : { status: "read", read_at: new Date().toISOString() })));
+    const del = button("Delete", () => {
+      if (del.dataset.armed) return write(del, () => db.collection(lane).doc(d.id).delete());
+      del.dataset.armed = "1"; del.textContent = "Confirm delete";
+      setTimeout(() => { delete del.dataset.armed; del.textContent = "Delete"; }, 4000);
+    });
+    del.classList.add("danger");
+    act.append(copy, toggle, del);
+    det.append(sum, body, act);
+    return det;
+  }
+
+  function button(label, fn) {
+    const b = document.createElement("button");
+    b.type = "button"; b.className = "btn"; b.textContent = label;
+    b.addEventListener("click", fn);
+    return b;
+  }
+
+  async function write(btn, op) {
+    btn.disabled = true;
+    try { await op(); }
+    catch (e) { showNotice(e && e.code === "invalid_argument" ? "Only the inbox owner can change items." : "That change did not save. Try again in a moment."); btn.disabled = false; }
+  }
+
+  function showNotice(text) { const n = $("notice"); n.textContent = text; n.hidden = false; }
+
+  $("compose").addEventListener("submit", async (ev) => {
+    ev.preventDefault();
+    if (!db) return;
+    const title = $("c-title").value.trim(), body = $("c-body").value.trim();
+    if (!title || !body) return;
+    const send = $("c-send"); send.disabled = true;
+    try {
+      await db.collection(dest).doc(newId()).set({
+        title, body, from: "browser", status: "new", read_at: null, created_at: new Date().toISOString(),
+      });
+      $("c-title").value = ""; $("c-body").value = "";
+      $("c-status").textContent = "Sent to " + LANES[dest] + ".";
+    } catch (e) {
+      $("c-status").textContent = e && e.code === "quota_exceeded" ? "The inbox is full. Delete old items first." : "Not sent. Check that you are signed in, then try again.";
+    } finally { send.disabled = false; }
+  });
+
+  (async () => {
+    db = window.claude ? await window.claude.use("db") : null;
+    if (!db) {
+      $("c-send").disabled = true;
+      showNotice("The inbox is not available in this view. Open this page in claude.ai while signed in to your own account.");
+      for (const lane of Object.keys(LANES)) $("l-" + lane).firstElementChild.textContent = "Inbox unavailable in this view.";
+      return;
+    }
+    for (const lane of Object.keys(LANES)) {
+      db.collection(lane).orderBy("created_at", "desc").limit(100).onSnapshot(
+        (snap) => render(lane, snap),
+        () => showNotice("The live inbox stopped updating. Reload the page."),
+      );
+    }
+  })();
+})();
+</script>
