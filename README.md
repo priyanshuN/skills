@@ -1,6 +1,6 @@
 # skills
 
-My small Claude Code skills, in one plugin called **kit**. Install it once on each
+Small Claude Code skills in one plugin called **kit**. MIT licensed; use freely. Install it once on each
 computer; every skill added here then reaches all of them.
 
 | Skill | What it does |
