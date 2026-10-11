@@ -1,13 +1,61 @@
 {
   "name": "skills",
-  "owner": { "name": "priyanshuN", "url": "https://github.com/priyanshuN" },
-  "metadata": { "description": "Small personal skills in one plugin, kit." },
+  "owner": {
+    "name": "priyanshuN",
+    "url": "https://github.com/priyanshuN"
+  },
+  "metadata": {
+    "description": "Everything I publish for Claude Code: kit (small skills), diagrams and triago."
+  },
   "plugins": [
     {
       "name": "kit",
       "source": "./",
       "description": "Small personal skills: handoff (pass prompts and context between two computers through a private claude.ai artifact).",
-      "author": { "name": "priyanshuN", "url": "https://github.com/priyanshuN" }
+      "author": {
+        "name": "priyanshuN",
+        "url": "https://github.com/priyanshuN"
+      }
+    },
+    {
+      "name": "diagrams",
+      "source": {
+        "source": "github",
+        "repo": "priyanshuN/diagrams"
+      },
+      "description": "Mermaid to Unicode text for chat, to sketch or clean pictures, and to narrated walkthroughs with voice, cues and a recall quiz.",
+      "homepage": "https://github.com/priyanshuN/diagrams#readme",
+      "keywords": [
+        "diagrams",
+        "mermaid",
+        "sequence-diagram",
+        "walkthrough",
+        "skills"
+      ],
+      "author": {
+        "name": "priyanshuN",
+        "url": "https://github.com/priyanshuN"
+      }
+    },
+    {
+      "name": "triago",
+      "source": {
+        "source": "npm",
+        "package": "@triago/cli"
+      },
+      "description": "Post a list of findings to a browser card, decide each one with a keystroke, and get the decisions back as structured data. Runs on 127.0.0.1, makes no network calls.",
+      "homepage": "https://github.com/priyanshuN/triago#readme",
+      "license": "MIT",
+      "keywords": [
+        "mcp",
+        "human-in-the-loop",
+        "code-review",
+        "triage"
+      ],
+      "author": {
+        "name": "priyanshuN",
+        "url": "https://github.com/priyanshuN"
+      }
     }
   ]
 }
