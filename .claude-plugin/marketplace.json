@@ -20,8 +20,8 @@
     {
       "name": "diagrams",
       "source": {
-        "source": "github",
-        "repo": "priyanshuN/diagrams"
+        "source": "url",
+        "url": "https://github.com/priyanshuN/diagrams.git"
       },
       "description": "Mermaid to Unicode text for chat, to sketch or clean pictures, and to narrated walkthroughs with voice, cues and a recall quiz.",
       "homepage": "https://github.com/priyanshuN/diagrams#readme",
