@@ -11,7 +11,7 @@
     {
       "name": "kit",
       "source": "./",
-      "description": "Small personal skills: handoff (pass prompts and context between two computers through a private claude.ai artifact).",
+      "description": "Small personal skills: handoff (pass prompts and context between two computers through a private claude.ai artifact) and ambition (make a request more ambitious: altitude, depth, range), plus the range-scout agent.",
       "author": {
         "name": "priyanshuN",
         "url": "https://github.com/priyanshuN"
