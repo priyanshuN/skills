@@ -8,7 +8,7 @@ This repo is also the catalog for everything I publish for Claude Code:
 | Plugin | Lives in | What it does |
 |---|---|---|
 | `kit` | this repo | Small skills. `/kit:handoff` passes a prompt or session context between two computers through a private claude.ai artifact. `/kit:ambition` makes a request more ambitious (altitude, depth, range); the `kit:range-scout` agent finds methods from outside fields |
-| `diagrams` | [priyanshuN/diagrams](https://github.com/priyanshuN/diagrams) | Flow and sequence diagrams as chat text, pictures and narrated walkthroughs |
+| `diagrams` | [priyanshuN/diagrams](https://github.com/priyanshuN/diagrams) | Flow and sequence diagrams as chat text, pictures and narrated walkthroughs; diagrams from recorded runs; interactive concept pages |
 | `triago` | [priyanshuN/triago](https://github.com/priyanshuN/triago) (npm `@triago/cli`) | Triage an agent's findings in a browser, one keystroke per item |
 
 ## Install (once per computer)
