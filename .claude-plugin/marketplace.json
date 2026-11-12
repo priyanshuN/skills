@@ -23,13 +23,15 @@
         "source": "url",
         "url": "https://github.com/priyanshuN/diagrams.git"
       },
-      "description": "Mermaid to Unicode text for chat, to sketch or clean pictures, and to narrated walkthroughs with voice, cues and a recall quiz.",
+      "description": "Diagrams that explain: Mermaid to Unicode text for chat, to clean or sketch pictures, and to narrated walkthroughs with voice, cues and a recall quiz; sequence diagrams drawn from recorded runs; and interactive concept pages that show how an idea behaves.",
       "homepage": "https://github.com/priyanshuN/diagrams#readme",
       "keywords": [
         "diagrams",
         "mermaid",
         "sequence-diagram",
         "walkthrough",
+        "trace",
+        "concept",
         "skills"
       ],
       "author": {

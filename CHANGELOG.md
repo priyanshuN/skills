@@ -1,5 +1,10 @@
 # Changelog
 
+## Catalog — 2026-11-12
+
+- The `diagrams` entry now names its two newer skills: `trace` (diagrams from recorded runs) and
+  `concept` (interactive pages that show how an idea behaves), released in diagrams 0.3.0.
+
 ## 0.2.0 — 2026-10-16
 
 - `ambition`: new skill. Makes a request more ambitious along altitude (ask for the outcome),
